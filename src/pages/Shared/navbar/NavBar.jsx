@@ -1,8 +1,9 @@
 
 import '../navbar/navbar.css'
 import logo from '../../../assets/logo.png'
-
+import { FaBeer, FaSearch } from "react-icons/fa";
 import { Link, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 const NavBar = () => {
 
@@ -45,6 +46,14 @@ const NavBar = () => {
             </li>
             <li>
                 <Link
+                    to='/searchDonors'
+                    className={`text-gray-950 hover:text-white ${location.pathname === '/searchDonors' ? 'bg-active' : ''}`}
+                >
+                   <FaSearch></FaSearch>
+                </Link>
+            </li>
+            <li>
+                <Link
                     to='/donationRequests'
                     className={`text-gray-950 hover:text-white ${location.pathname === '/donationRequests' ? 'bg-active' : ''}`}
                 >
@@ -56,13 +65,13 @@ const NavBar = () => {
 
 
     return (
-        <div className="navbar text-white bg-gradient-to-r from-yellow-300 to-orange-600 p-10 ">
-            {/* <Helmet>
-                <title>InnSight</title>
+        <div className="navbar fixed z-10 text-white bg-gradient-to-r from-yellow-300 to-orange-600 p-10 ">
+            <Helmet>
+                <title>Home</title>
                 <meta name="description" content="Your website description" />
                 <meta name="keywords" content="your, keywords, here" />
 
-            </Helmet> */}
+            </Helmet>
             <div className="navbar-start">
                 <div className="dropdown">
                     <label tabIndex={0} className="btn btn-ghost text-gray-950 lg:hidden">
@@ -73,9 +82,9 @@ const NavBar = () => {
                     </ul>
                 </div>
                 <Link to='/' className="btn btn-ghost normal-case text-xl">
-                    <div className='flex flex-col text-center items-center' >
-                        <figure><img className='w-[50px] h-[50px]' src={logo} alt="" /></figure>
-                        <span className="text-purple-900">Life<span className="text-blue-900">Share</span></span>
+                    <div className='flex flex-col lg:flex-row text-center items-center' >
+                        <img className='w-[50px] h-[50px]' src={logo} alt="" />
+                        <span className="ml-2 text-purple-900">Life<span className="text-blue-900">Share</span></span>
                     </div>
                 </Link>
             </div>
