@@ -5,7 +5,7 @@ import '../Banner/banner.css'
 
 const Banner = () => {
     return (
-        <div className="relative text-center mt-32">
+        <div className="relative text-center">
             <figure className='relative'>
                 <img src={banner} alt="" className="w-full h-[600px]" style={{ filter: 'brightness(50%)' }} />
             </figure>

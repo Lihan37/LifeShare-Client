@@ -1,7 +1,7 @@
 
 import '../navbar/navbar.css'
 import logo from '../../../assets/logo.png'
-import { FaBeer, FaSearch } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
@@ -27,7 +27,7 @@ const NavBar = () => {
                     Dashboard
                 </Link>
             </li>
-            
+
             <li>
                 <Link
                     to='/registration'
@@ -49,7 +49,7 @@ const NavBar = () => {
                     to='/searchDonors'
                     className={`text-gray-950 hover:text-white ${location.pathname === '/searchDonors' ? 'bg-active' : ''}`}
                 >
-                   <FaSearch></FaSearch>
+                    <FaSearch></FaSearch>
                 </Link>
             </li>
             <li>
@@ -95,7 +95,9 @@ const NavBar = () => {
             </div>
 
             <div className="navbar-end">
-                <button className='btn bg-red-700 text-white'>Login</button>
+                <Link to='/login'>
+                    <button className='btn bg-red-600 text-white border-0'>Login</button>
+                </Link>
             </div>
 
         </div>
