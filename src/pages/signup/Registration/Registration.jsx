@@ -1,10 +1,97 @@
 import { Helmet } from "react-helmet";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { AuthContext } from "../../providers/AuthProvider";
+import { ToastContainer, toast } from "react-toastify";
+import UseAxiosPublic from "../../hooks/useAxiosPublic/UseAxioxPublic";
+import Swal from "sweetalert2";
+
+
 
 const Registration = () => {
+
+    const axiosPublic = UseAxiosPublic();
+
+    const { createUser, updateUserProfile } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const [registerError, setRegisterError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm();
+
+    const onSubmit = data => {
+        console.log(data);
+        const { password, confirmPassword } = data;
+
+        createUser(data.email, data.password)
+            .then(result => {
+                const loggedUSer = result.user;
+                console.log(loggedUSer);
+                updateUserProfile(data.name, data.photoURL)
+                    .then(() => {
+                        console.log('user profile info updated');
+                        const userInfo = {
+                            name: data.name,
+                            email: data.email
+                        }
+                        axiosPublic.post('/users', userInfo)
+                            .then(res => {
+                                if (res.data.insertedId) {
+                                    console.log('userAdded db');
+                                    reset();
+                                    Swal.fire({
+                                        position: "top-end",
+                                        icon: "success",
+                                        title: "Your work has been saved",
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
+                                    navigate('/');
+                                }
+                            })
+
+                    })
+                    .catch(error => console.log(error))
+            })
+
+        if (password !== confirmPassword) {
+            toast.error('Passwords do not match');
+            return;
+        }
+
+
+        if (password.length < 6) {
+            setRegisterError('Password should be at least 6 characters long');
+            toast.error('Password should be at least 6 characters long');
+            return;
+        } else if (!/[A-Z]/.test(password)) {
+            setRegisterError('Password should contain at least one capital letter');
+            toast.error('Password should contain at least one capital letter');
+            return;
+        } else if (!/[!@#$%^&*()_+[\]{};':"\\|,.<>?]/.test(password)) {
+            setRegisterError('Password should contain at least one special character');
+            toast.error('Password should contain at least one special character');
+            return;
+        }
+        
+
+
+        setRegisterError('');
+        setSuccess('User created successfully');
+    };
+
+
+
+
     const [districts, setDistricts] = useState([]);
     const [upazillas, setUpazillas] = useState([]);
+    const [selectedDistrict, setSelectedDistrict] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -26,9 +113,14 @@ const Registration = () => {
         fetchData();
     }, []);
 
-    const handleRegister = event => {
-        event.preventDefault();
-    }
+    const handleDistrictChange = (event) => {
+        const selectedDistrictId = event.target.value;
+        setSelectedDistrict(selectedDistrictId);
+    };
+
+    const filteredUpazillas = upazillas.filter(
+        (upazilla) => upazilla.district_id === selectedDistrict
+    );
 
     return (
         <div>
@@ -38,16 +130,100 @@ const Registration = () => {
             <div className="hero min-h-screen bg-base-200">
                 <div className="hero-content flex-col lg:flex-row-reverse">
 
-                    <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+                    <div className="card shrink-0 w-full  shadow-2xl bg-base-100">
                         <h1 className="text-center font-semibold pt-5 text-3xl">Register here!</h1>
-                        <form onSubmit={handleRegister} className="card-body">
+                        <form onSubmit={handleSubmit(onSubmit)} className="card-body grid grid-cols-2">
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Name</span>
+                                </label>
+                                <input type="text" placeholder="name"
+                                    {...register("name", { required: true })}
+                                    name="name"
+                                    className="input input-bordered" required />
+                                {errors.nameRequired && <span>This field is required</span>}
+                            </div>
                             <div className="form-control">
                                 <label className="label">
                                     <span className="label-text">Email</span>
                                 </label>
                                 <input type="email" placeholder="email"
+                                    {...register("email")}
                                     name="email"
                                     className="input input-bordered" required />
+                            </div>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Avatar</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="avatar"
+                                    {...register("avatar")}
+                                    name="avatar"
+                                    className="input input-bordered"
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Blood Group</span>
+                                </label>
+                                <select
+                                    {...register("bloodGroup")}
+                                    name="bloodGroup"
+                                    className="select select-bordered"
+                                    required
+                                >
+                                    <option value="" disabled>Select Blood Group</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                            </div>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">District</span>
+                                </label>
+                                <select
+                                    {...register("district")}
+                                    name="district"
+                                    className="select select-bordered"
+                                    onChange={handleDistrictChange}
+                                    required
+                                >
+                                    <option value="" disabled>Select District</option>
+                                    {districts.map((district) => (
+                                        <option key={district.id} value={district.id}>
+                                            {district.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Upazilla</span>
+                                </label>
+                                <select
+                                    {...register("upazila")}
+                                    name="upazila"
+                                    className="select select-bordered"
+                                    required
+                                >
+                                    <option value="" disabled>Select Upazila</option>
+                                    {filteredUpazillas.map((upazilla) => (
+                                        <option key={upazilla.id} value={upazilla.id}>
+                                            {upazilla.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="form-control">
                                 <label className="label">
@@ -55,21 +231,47 @@ const Registration = () => {
                                 </label>
                                 <input type="password" placeholder="password"
                                     name="password"
+                                    {...register("password")}
                                     className="input input-bordered" required />
                                 <label className="label">
                                     <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                                 </label>
                             </div>
-                            <div className="form-control mt-6">
-                                <button className="btn btn-primary">Register</button>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Confirm Password</span>
+                                </label>
+                                <input
+                                    type="password"
+                                    placeholder="confirm password"
+                                    name="confirmPassword"
+                                    {...register('confirmPassword', { required: true })}
+                                    className="input input-bordered"
+                                    required
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                />
+                                {errors.confirmPassword && <span>This field is required</span>}
+                            </div>
+                            <div className="form-control col-span-2">
+                                <button className="btn w-full btn-primary">Register</button>
                             </div>
                         </form>
-                        <p className="px-4 pb-2"><small>Already have an account? <Link className="text-blue-600 font-semibold" to='/registration'>Login here</Link></small></p>
+
+                        <p className="px-4 pb-2"><small>Already have an account? <Link className="text-blue-600 font-semibold" to='/login'>Login here</Link></small></p>
                     </div>
+
                 </div>
             </div>
 
+            {/* <div>
+                <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
 
+            </div>
+            {success && (
+                <div className="alert alert-success mt-4">
+                    {success}
+                </div>
+            )} */}
         </div>
     );
 };

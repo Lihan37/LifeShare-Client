@@ -65,7 +65,7 @@ const NavBar = () => {
 
 
     return (
-        <div className="navbar fixed z-10 text-white bg-gradient-to-r from-yellow-300 to-orange-600 p-10 ">
+        <div className="navbar fixed max-w-screen-xl mx-auto z-10 text-white bg-gradient-to-r from-yellow-300 to-orange-600 p-10 ">
             <Helmet>
                 <title>Home</title>
                 <meta name="description" content="Your website description" />
