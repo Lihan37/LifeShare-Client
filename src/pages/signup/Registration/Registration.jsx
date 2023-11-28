@@ -8,10 +8,12 @@ import UseAxiosPublic from "../../hooks/useAxiosPublic/UseAxioxPublic";
 import Swal from "sweetalert2";
 
 
+const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
 
 const Registration = () => {
 
-    const axiosPublic = UseAxiosPublic();
+    
 
     const { createUser, updateUserProfile } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -25,8 +27,21 @@ const Registration = () => {
         formState: { errors },
     } = useForm();
 
-    const onSubmit = data => {
+    const axiosPublic = UseAxiosPublic();
+
+    const onSubmit = async (data) => {
         console.log(data);
+
+        const imageFile = { image: data.avatar[0] };
+        const res = await axiosPublic.post(image_hosting_api, imageFile, {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        });
+        
+        console.log(res.data);
+
+
         const { password, confirmPassword } = data;
 
         createUser(data.email, data.password)
@@ -38,17 +53,23 @@ const Registration = () => {
                         console.log('user profile info updated');
                         const userInfo = {
                             name: data.name,
-                            email: data.email
+                            email: data.email,
+                            avatar : res.data.data.display_url,
+                            bloodGroup : data.bloodGroup,
+                            district : data.district,
+                            upazila : data.upazila,
+
+
                         }
                         axiosPublic.post('/users', userInfo)
                             .then(res => {
                                 if (res.data.insertedId) {
-                                    console.log('userAdded db');
+                                    console.log('userAdded db', userInfo.data);
                                     reset();
                                     Swal.fire({
                                         position: "top-end",
                                         icon: "success",
-                                        title: "Your work has been saved",
+                                        title: "User Created Successfully",
                                         showConfirmButton: false,
                                         timer: 1500
                                     });
@@ -79,7 +100,7 @@ const Registration = () => {
             toast.error('Password should contain at least one special character');
             return;
         }
-        
+
 
 
         setRegisterError('');
@@ -157,11 +178,11 @@ const Registration = () => {
                                     <span className="label-text">Avatar</span>
                                 </label>
                                 <input
-                                    type="text"
+                                    type="file"
                                     placeholder="avatar"
                                     {...register("avatar")}
                                     name="avatar"
-                                    className="input input-bordered"
+                                    className="input file-input input-bordered"
                                     required
                                 />
                             </div>
@@ -263,7 +284,7 @@ const Registration = () => {
                 </div>
             </div>
 
-            {/* <div>
+            <div>
                 <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
 
             </div>
@@ -271,7 +292,7 @@ const Registration = () => {
                 <div className="alert alert-success mt-4">
                     {success}
                 </div>
-            )} */}
+            )}
         </div>
     );
 };
