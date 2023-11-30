@@ -12,9 +12,6 @@ const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
 
 const Registration = () => {
-
-    
-
     const { createUser, updateUserProfile } = useContext(AuthContext);
     const navigate = useNavigate();
     const [registerError, setRegisterError] = useState('');
@@ -28,88 +25,6 @@ const Registration = () => {
     } = useForm();
 
     const axiosPublic = UseAxiosPublic();
-
-    const onSubmit = async (data) => {
-        console.log(data);
-
-        const imageFile = { image: data.avatar[0] };
-        const res = await axiosPublic.post(image_hosting_api, imageFile, {
-            headers: {
-                'content-type': 'multipart/form-data'
-            }
-        });
-        
-        console.log(res.data);
-
-
-        const { password, confirmPassword } = data;
-
-        createUser(data.email, data.password)
-            .then(result => {
-                const loggedUSer = result.user;
-                console.log(loggedUSer);
-                updateUserProfile(data.name, data.photoURL)
-                    .then(() => {
-                        console.log('user profile info updated');
-                        const userInfo = {
-                            name: data.name,
-                            email: data.email,
-                            avatar : res.data.data.display_url,
-                            bloodGroup : data.bloodGroup,
-                            district : data.district,
-                            upazila : data.upazila,
-
-
-                        }
-                        axiosPublic.post('/users', userInfo)
-                            .then(res => {
-                                if (res.data.insertedId) {
-                                    console.log('userAdded db', userInfo.data);
-                                    reset();
-                                    Swal.fire({
-                                        position: "top-end",
-                                        icon: "success",
-                                        title: "User Created Successfully",
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    });
-                                    navigate('/');
-                                }
-                            })
-
-                    })
-                    .catch(error => console.log(error))
-            })
-
-        if (password !== confirmPassword) {
-            toast.error('Passwords do not match');
-            return;
-        }
-
-
-        if (password.length < 6) {
-            setRegisterError('Password should be at least 6 characters long');
-            toast.error('Password should be at least 6 characters long');
-            return;
-        } else if (!/[A-Z]/.test(password)) {
-            setRegisterError('Password should contain at least one capital letter');
-            toast.error('Password should contain at least one capital letter');
-            return;
-        } else if (!/[!@#$%^&*()_+[\]{};':"\\|,.<>?]/.test(password)) {
-            setRegisterError('Password should contain at least one special character');
-            toast.error('Password should contain at least one special character');
-            return;
-        }
-
-
-
-        setRegisterError('');
-        setSuccess('User created successfully');
-    };
-
-
-
-
     const [districts, setDistricts] = useState([]);
     const [upazillas, setUpazillas] = useState([]);
     const [selectedDistrict, setSelectedDistrict] = useState(null);
@@ -117,11 +32,9 @@ const Registration = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-
                 const districtsResponse = await fetch("districts.json");
                 const districtsData = await districtsResponse.json();
                 setDistricts(districtsData);
-
 
                 const upazillasResponse = await fetch("upazilla.json");
                 const upazillasData = await upazillasResponse.json();
@@ -142,6 +55,83 @@ const Registration = () => {
     const filteredUpazillas = upazillas.filter(
         (upazilla) => upazilla.district_id === selectedDistrict
     );
+
+    const onSubmit = async (data) => {
+        console.log(data);
+
+        const imageFile = { image: data.avatar[0] };
+        const res = await axiosPublic.post(image_hosting_api, imageFile, {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        });
+
+        console.log(res.data);
+
+        const { password, confirmPassword } = data;
+
+        createUser(data.email, data.password)
+            .then(result => {
+                const loggedUser = result.user;
+                console.log(loggedUser);
+                updateUserProfile(data.name, data.photoURL)
+                    .then(() => {
+                        console.log('user profile info updated');
+
+                        const selectedDistrictObject = districts.find((district) => district.id === selectedDistrict);
+                        const selectedUpazilaObject = upazillas.find((upazila) => upazila.id === data.upazila);
+
+                        const userInfo = {
+                            name: data.name,
+                            email: data.email,
+                            avatar: res.data.data.display_url,
+                            bloodGroup: data.bloodGroup,
+                            district: selectedDistrictObject ? selectedDistrictObject.name : '',
+                            upazila: selectedUpazilaObject ? selectedUpazilaObject.name : '',
+                        };
+
+                        axiosPublic.post('/users', userInfo)
+                            .then(res => {
+                                if (res.data.insertedId) {
+                                    console.log('userAdded db', userInfo.data);
+                                    reset();
+                                    Swal.fire({
+                                        position: "top-end",
+                                        icon: "success",
+                                        title: "User Created Successfully",
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
+                                    navigate('/');
+                                }
+                            })
+
+                    })
+                    .catch(error => console.log(error))
+            });
+
+        if (password !== confirmPassword) {
+            toast.error('Passwords do not match');
+            return;
+        }
+
+        if (password.length < 6) {
+            setRegisterError('Password should be at least 6 characters long');
+            toast.error('Password should be at least 6 characters long');
+            return;
+        } else if (!/[A-Z]/.test(password)) {
+            setRegisterError('Password should contain at least one capital letter');
+            toast.error('Password should contain at least one capital letter');
+            return;
+        } else if (!/[!@#$%^&*()_+[\]{};':"\\|,.<>?]/.test(password)) {
+            setRegisterError('Password should contain at least one special character');
+            toast.error('Password should contain at least one special character');
+            return;
+        }
+
+        setRegisterError('');
+        setSuccess('User created successfully');
+    };
 
     return (
         <div>
