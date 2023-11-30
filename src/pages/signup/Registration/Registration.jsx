@@ -6,6 +6,7 @@ import { AuthContext } from "../../providers/AuthProvider";
 import { ToastContainer, toast } from "react-toastify";
 import UseAxiosPublic from "../../hooks/useAxiosPublic/UseAxioxPublic";
 import Swal from "sweetalert2";
+import SocialLogin from "../SocialLogin/SocialLogin";
 
 
 const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
@@ -267,8 +268,9 @@ const Registration = () => {
                                 <button className="btn w-full btn-primary">Register</button>
                             </div>
                         </form>
-
-                        <p className="px-4 pb-2"><small>Already have an account? <Link className="text-blue-600 font-semibold" to='/login'>Login here</Link></small></p>
+                        <div className="divider"></div>
+                        <SocialLogin></SocialLogin>
+                        <p className="px-4 text-xl pb-2"><small>Already have an account? <Link className="text-blue-600 font-semibold" to='/login'>Login here</Link></small></p>
                     </div>
 
                 </div>

@@ -1,4 +1,4 @@
-import { FaChevronLeft, FaHandHoldingHeart, FaHeart, FaHome, FaUser } from 'react-icons/fa';
+import { FaChevronLeft, FaHandHoldingHeart, FaHeart, FaHome, FaUser, FaUsers } from 'react-icons/fa';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 import { useContext } from 'react';
@@ -8,6 +8,7 @@ import RecentDonationRequests from '../pages/Dahsboard/RecentDonationRequests/Re
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const location = useLocation();
+  const isAdmin = true;
 
   const isHomePage = location.pathname === '/dashboard';
 
@@ -15,31 +16,64 @@ const Dashboard = () => {
     <div className="flex flex-col md:flex-row">
       <div className="w-full md:w-64 min-h-screen bg-yellow-300">
         <ul className="menu p-4">
-          <li>
+        <li>
             <Link to="/">
               <FaChevronLeft></FaChevronLeft>Go back
             </Link>
           </li>
-          <li>
-            <Link to="/dashboard">
-              <FaHome></FaHome>Home
-            </Link>
-          </li>
-          <li>
-            <Link to="/dashboard/profile">
-              <FaUser></FaUser>My Profile
-            </Link>
-          </li>
-          <li>
-            <Link to="/dashboard/my-donation-requests">
-              <FaHeart></FaHeart> My Donation requests
-            </Link>
-          </li>
-          <li>
-            <Link to="/dashboard/create-donation-request">
-              <FaHandHoldingHeart></FaHandHoldingHeart> Create Donation
-            </Link>
-          </li>
+          {
+            isAdmin ? <>
+              <li>
+                <Link to="/dashboard/adminHome">
+                  <FaHome></FaHome>Admin Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/dashboard/profile">
+                  <FaUser></FaUser>My Profile
+                </Link>
+              </li>
+              <li>
+                <Link to="/dashboard/allUsers">
+                  <FaUsers></FaUsers>All Users
+                </Link>
+              </li>
+              <li>
+                <Link to="/dashboard/all-blood-donation-request">
+                  <FaHeart></FaHeart> All Blood Donations
+                </Link>
+              </li>
+              <li>
+                <Link to="/dashboard/create-donation-request">
+                  <FaHandHoldingHeart></FaHandHoldingHeart> Create Donation
+                </Link>
+              </li>
+            </>
+              :
+              <>
+                <li>
+                  <Link to="/dashboard">
+                    <FaHome></FaHome>Donor Home
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboard/profile">
+                    <FaUser></FaUser>My Profile
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboard/my-donation-requests">
+                    <FaHeart></FaHeart> My Donation requests
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboard/create-donation-request">
+                    <FaHandHoldingHeart></FaHandHoldingHeart> Create Donation
+                  </Link>
+                </li>
+              </>
+          }
+          
         </ul>
       </div>
 

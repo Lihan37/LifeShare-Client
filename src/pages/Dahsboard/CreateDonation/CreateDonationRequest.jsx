@@ -211,7 +211,6 @@ const CreateDonationRequest = () => {
                                 <button type="submit" className="btn w-full btn-primary">Request Donation</button>
                             </div>
                         </form>
-                        <p className="px-4 pb-2"><small>Already have an account? <Link className="text-blue-600 font-semibold" to='/login'>Login here</Link></small></p>
                     </div>
                 </div>
             </div>

@@ -11,6 +11,7 @@ import PrivateRoute from "./PrivateRoute";
 import MyProfile from "../pages/Dahsboard/MyProfile/MyProfile";
 import MyDonationRequests from "../pages/Dahsboard/MyRequests/MyDonationRequests";
 import CreateDonationRequest from "../pages/Dahsboard/CreateDonation/CreateDonationRequest";
+import AllUsers from "../pages/Dahsboard/AllUSers/AllUsers";
 
 export const router = createBrowserRouter([
     {
@@ -50,6 +51,10 @@ export const router = createBrowserRouter([
             {
                 path: 'create-donation-request',
                 element: <CreateDonationRequest></CreateDonationRequest>
+            },
+            {
+                path: 'allUsers',
+                element: <AllUsers></AllUsers>
             }
         ]
     }
