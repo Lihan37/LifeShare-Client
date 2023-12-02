@@ -1,14 +1,16 @@
-import { FaChevronLeft, FaHandHoldingHeart, FaHeart, FaHome, FaUser, FaUsers } from 'react-icons/fa';
+import { FaBlog, FaChevronLeft, FaHandHoldingHeart, FaHeart, FaHome, FaUser, FaUsers } from 'react-icons/fa';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 import { useContext } from 'react';
 import { AuthContext } from '../pages/providers/AuthProvider';
 import RecentDonationRequests from '../pages/Dahsboard/RecentDonationRequests/RecenDonationrequests';
+import UseAdmin from '../pages/hooks/UseAdmin/UseAdmin';
+
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const location = useLocation();
-  const isAdmin = true;
+  const [isAdmin] = UseAdmin();
 
   const isHomePage = location.pathname === '/dashboard';
 
@@ -16,7 +18,7 @@ const Dashboard = () => {
     <div className="flex flex-col md:flex-row">
       <div className="w-full md:w-64 min-h-screen bg-yellow-300">
         <ul className="menu p-4">
-        <li>
+          <li>
             <Link to="/">
               <FaChevronLeft></FaChevronLeft>Go back
             </Link>
@@ -47,6 +49,13 @@ const Dashboard = () => {
                 <Link to="/dashboard/create-donation-request">
                   <FaHandHoldingHeart></FaHandHoldingHeart> Create Donation
                 </Link>
+                
+              </li>
+              <li>
+              <Link to="/dashboard/content-management">
+                  <FaBlog></FaBlog> Content Management
+                </Link>
+                
               </li>
             </>
               :
@@ -71,17 +80,31 @@ const Dashboard = () => {
                     <FaHandHoldingHeart></FaHandHoldingHeart> Create Donation
                   </Link>
                 </li>
+                <li>
+              <Link to="/dashboard/content-management">
+                  <FaBlog></FaBlog> Content Management
+                </Link>
+                
+              </li>
               </>
           }
-          
+
         </ul>
       </div>
 
       <div className="flex-1 p-4">
-        <h2 className="text-3xl mt-5 text-center font-semibold mb-4">Welcome, {user.displayName}!</h2>
+        <h2 className="text-3xl mt-5 text-center font-semibold mb-4">
+          Welcome, {user.displayName}!
+        </h2>
+        {isHomePage && (
+          <p className="text-center text-lg mb-4">
+            Thank you for being part of our community. Your contributions make a difference!
+          </p>
+        )}
         {isHomePage && <RecentDonationRequests />}
         <Outlet />
       </div>
+
     </div>
   );
 };

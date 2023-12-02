@@ -18,7 +18,7 @@ const CreateDonationRequest = () => {
 
     const onSubmit = async (data) => {
         try {
-            // Add additional fields as needed
+            
             const requestData = {
                 ...data,
                 requesterName: user.name,
@@ -50,18 +50,17 @@ const CreateDonationRequest = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const districtsResponse = await fetch("../../../../public/districts.json");
+                const districtsResponse = await fetch("/src/districts.json");
                 const districtsData = await districtsResponse.json();
                 setDistricts(districtsData);
-
-                const upazillasResponse = await fetch("../../../../public/upazilla.json");
+        
+                const upazillasResponse = await fetch("/src/upazilla.json");
                 const upazillasData = await upazillasResponse.json();
                 setUpazillas(upazillasData);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         };
-
         fetchData();
     }, []);
 

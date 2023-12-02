@@ -10,7 +10,7 @@ import SocialLogin from "../SocialLogin/SocialLogin";
 
 
 const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
-const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
+const image_hosting_api = `https://api.imgbb.com/1/upload?key=600d5036af985fdac53804b2e2c7d4fb`;
 
 const Registration = () => {
     const { createUser, updateUserProfile } = useContext(AuthContext);
@@ -61,77 +61,88 @@ const Registration = () => {
         console.log(data);
 
         const imageFile = { image: data.avatar[0] };
-        const res = await axiosPublic.post(image_hosting_api, imageFile, {
-            headers: {
-                'content-type': 'multipart/form-data'
-            }
-        });
+        // const res = await axiosPublic.post(image_hosting_api, imageFile, {
+        //     headers: {
+        //         'content-type': 'multipart/form-data'
+        //     }
+        // });
+        const formData = new FormData();
+        formData.append('image', data.avatar[0])
 
-        console.log(res.data);
+        fetch(image_hosting_api, {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json()).then((res) => {
+                console.log(res);
+                createUser(data.email, data.password)
+                .then(result => {
+                    const loggedUser = result.user;
+                    console.log(loggedUser);
+                    updateUserProfile(data.name, data.photoURL)
+                        .then(() => {
+                            console.log('user profile info updated');
+
+                            const selectedDistrictObject = districts.find((district) => district.id === selectedDistrict);
+                            const selectedUpazilaObject = upazillas.find((upazila) => upazila.id === data.upazila);
+
+                            const userInfo = {
+                                name: data.name,
+                                email: data.email,
+                                avatar:  res.data.url_viewer,
+                                bloodGroup: data.bloodGroup,
+                                district: selectedDistrictObject ? selectedDistrictObject.name : '',
+                                upazila: selectedUpazilaObject ? selectedUpazilaObject.name : '',
+                            };
+
+                            axiosPublic.post('/users', userInfo)
+                                .then(res => {
+                                    if (res.data.insertedId) {
+                                        console.log('userAdded db', userInfo.data);
+                                        reset();
+                                        Swal.fire({
+                                            position: "top-end",
+                                            icon: "success",
+                                            title: "User Created Successfully",
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                        navigate('/');
+                                    }
+                                })
+
+                        })
+                        .catch(error => console.log(error))
+                });
+
+                if (password !== confirmPassword) {
+                    toast.error('Passwords do not match');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    setRegisterError('Password should be at least 6 characters long');
+                    toast.error('Password should be at least 6 characters long');
+                    return;
+                } else if (!/[A-Z]/.test(password)) {
+                    setRegisterError('Password should contain at least one capital letter');
+                    toast.error('Password should contain at least one capital letter');
+                    return;
+                } else if (!/[!@#$%^&*()_+[\]{};':"\\|,.<>?]/.test(password)) {
+                    setRegisterError('Password should contain at least one special character');
+                    toast.error('Password should contain at least one special character');
+                    return;
+                }
+
+                setRegisterError('');
+                setSuccess('User created successfully')
+            })
+
+        // console.log(res.data);
 
         const { password, confirmPassword } = data;
 
-        createUser(data.email, data.password)
-            .then(result => {
-                const loggedUser = result.user;
-                console.log(loggedUser);
-                updateUserProfile(data.name, data.photoURL)
-                    .then(() => {
-                        console.log('user profile info updated');
 
-                        const selectedDistrictObject = districts.find((district) => district.id === selectedDistrict);
-                        const selectedUpazilaObject = upazillas.find((upazila) => upazila.id === data.upazila);
-
-                        const userInfo = {
-                            name: data.name,
-                            email: data.email,
-                            avatar: res.data.data.display_url,
-                            bloodGroup: data.bloodGroup,
-                            district: selectedDistrictObject ? selectedDistrictObject.name : '',
-                            upazila: selectedUpazilaObject ? selectedUpazilaObject.name : '',
-                        };
-
-                        axiosPublic.post('/users', userInfo)
-                            .then(res => {
-                                if (res.data.insertedId) {
-                                    console.log('userAdded db', userInfo.data);
-                                    reset();
-                                    Swal.fire({
-                                        position: "top-end",
-                                        icon: "success",
-                                        title: "User Created Successfully",
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    });
-                                    navigate('/');
-                                }
-                            })
-
-                    })
-                    .catch(error => console.log(error))
-            });
-
-        if (password !== confirmPassword) {
-            toast.error('Passwords do not match');
-            return;
-        }
-
-        if (password.length < 6) {
-            setRegisterError('Password should be at least 6 characters long');
-            toast.error('Password should be at least 6 characters long');
-            return;
-        } else if (!/[A-Z]/.test(password)) {
-            setRegisterError('Password should contain at least one capital letter');
-            toast.error('Password should contain at least one capital letter');
-            return;
-        } else if (!/[!@#$%^&*()_+[\]{};':"\\|,.<>?]/.test(password)) {
-            setRegisterError('Password should contain at least one special character');
-            toast.error('Password should contain at least one special character');
-            return;
-        }
-
-        setRegisterError('');
-        setSuccess('User created successfully');
     };
 
     return (

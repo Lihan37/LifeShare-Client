@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import UseAxiosPublic from '../../hooks/useAxiosPublic/UseAxioxPublic';
+import { AuthContext } from '../../providers/AuthProvider';
 
 const MyDonationRequests = () => {
   const axiosPublic = UseAxiosPublic();
@@ -7,26 +8,35 @@ const MyDonationRequests = () => {
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [requestsPerPage] = useState(5); // Adjust the number of requests per page
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchDonationRequests = async () => {
       try {
-        // Fetch donation requests from the backend
-        const response = await axiosPublic.get('/donationRequests');
-        setDonationRequests(response.data);
+        if (user && user.email) {
+          // Fetch all donation requests initially
+          const allDonationRequests = await axiosPublic.get(`/donationRequests`);
+
+          // Filter donation requests based on the logged-in user's email
+          const userDonationRequests = allDonationRequests.data.filter(
+            (request) => request.requesterEmail === user.email
+          );
+
+          setDonationRequests(userDonationRequests);
+          setFilteredRequests(userDonationRequests);
+        }
       } catch (error) {
         console.error('Error fetching donation requests:', error);
       }
     };
 
     fetchDonationRequests();
-  }, [axiosPublic]);
+  }, [axiosPublic, user]);
 
   useEffect(() => {
-    // Update the filtered requests whenever donationRequests change
+    // Update filteredRequests when donationRequests changes
     setFilteredRequests(donationRequests);
   }, [donationRequests]);
-
   const indexOfLastRequest = currentPage * requestsPerPage;
   const indexOfFirstRequest = indexOfLastRequest - requestsPerPage;
   const currentRequests = filteredRequests.slice(indexOfFirstRequest, indexOfLastRequest);

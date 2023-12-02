@@ -12,12 +12,17 @@ import MyProfile from "../pages/Dahsboard/MyProfile/MyProfile";
 import MyDonationRequests from "../pages/Dahsboard/MyRequests/MyDonationRequests";
 import CreateDonationRequest from "../pages/Dahsboard/CreateDonation/CreateDonationRequest";
 import AllUsers from "../pages/Dahsboard/AllUSers/AllUsers";
+import AllDonation from "../pages/Dahsboard/AllDonation/AllDonation";
+import AdminHome from "../pages/Dahsboard/AdminHome/AdminHome";
+import ContentManagement from "../pages/Dahsboard/ContentManagement/ContentManagement";
+import BlogList from "../pages/Dahsboard/ContentManagement/BlogList";
+import DonationDetailsPage from "../pages/Donationdetails/DonationDetailsPage";
 
 export const router = createBrowserRouter([
     {
         path: "/",
         element: <Main></Main>,
-        children:[
+        children: [
             {
                 path: '/',
                 element: <Home></Home>
@@ -33,6 +38,14 @@ export const router = createBrowserRouter([
             {
                 path: '/login',
                 element: <Login></Login>
+            },
+            {
+                path: '/blog',
+                element: <BlogList></BlogList>
+            },
+            {
+                path: '/donationDetails',
+                element: <DonationDetailsPage></DonationDetailsPage>
             }
         ]
     },
@@ -55,6 +68,18 @@ export const router = createBrowserRouter([
             {
                 path: 'allUsers',
                 element: <AllUsers></AllUsers>
+            },
+            {
+                path: 'all-blood-donation-request',
+                element: <AllDonation></AllDonation>
+            },
+            {
+                path: 'adminHome',
+                element: <AdminHome></AdminHome>
+            },
+            {
+                path:  'content-management',
+                element: <ContentManagement></ContentManagement>
             }
         ]
     }

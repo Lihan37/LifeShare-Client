@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import SocialLogin from "../SocialLogin/SocialLogin";
 
 const Login = () => {
 
@@ -44,10 +45,10 @@ const Login = () => {
     }
 
     return (
-        <div className="hero min-h-screen bg-base-200">
+        <div className="hero  min-h-screen bg-base-200">
             <div className="hero-content flex-col lg:flex-row-reverse">
 
-                <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+                <div className="card shrink-0 w-full shadow-2xl bg-base-100">
                     <h1 className="text-center font-semibold pt-5 text-3xl">Login here!</h1>
                     <form onSubmit={handleLogin} className="card-body">
                         <div className="form-control">
@@ -72,6 +73,7 @@ const Login = () => {
                         <div className="form-control mt-6">
                             <button className="btn btn-primary">Login</button>
                         </div>
+                        <SocialLogin></SocialLogin>
                     </form>
                     <p className="px-4 pb-2"><small>New here? <Link className="text-blue-600 font-semibold" to='/registration'>Create an account</Link></small></p>
                 </div>

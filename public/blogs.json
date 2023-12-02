@@ -1,0 +1,31 @@
+[
+    {
+      "id": 1,
+      "title": "Why Blood Donation Matters",
+      "thumbnail": "https://example.com/blood-donation-thumbnail1.jpg",
+      "content": "Every drop of blood you donate can save a life. Join us in our blood donation campaign and make a difference in the lives of those in need. Your contribution can bring hope and healing to someone in a critical condition. Be a hero, donate blood today!",
+      "status": "draft"
+    },
+    {
+      "id": 2,
+      "title": "The Impact of Blood Donation: Stories of Hope",
+      "thumbnail": "https://example.com/blood-donation-thumbnail2.jpg",
+      "content": "Discover real stories of hope and transformation through blood donation. Our campaign highlights the journeys of individuals whose lives have been positively impacted by blood donors like you. Your generosity can create a ripple effect of positive change.",
+      "status": "published"
+    },
+    {
+      "id": 3,
+      "title": "Making a Difference: Join Our Blood Drive",
+      "thumbnail": "https://example.com/blood-donation-thumbnail3.jpg",
+      "content": "Be part of something meaningful by participating in our upcoming blood drive. Your willingness to donate blood can make a significant impact on the community. Together, we can ensure a stable and sufficient blood supply for those in need.",
+      "status": "draft"
+    },
+    {
+      "id": 4,
+      "title": "The Science Behind Blood Donation",
+      "thumbnail": "https://example.com/blood-donation-thumbnail4.jpg",
+      "content": "Explore the science and importance of blood donation. Learn about the different blood types, the process of donation, and how each donation contributes to various medical treatments. Your decision to donate blood is a vital step towards creating a healthier future.",
+      "status": "published"
+    }
+  ]
+  

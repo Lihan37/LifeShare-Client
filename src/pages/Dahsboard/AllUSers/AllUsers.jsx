@@ -1,9 +1,9 @@
 
-import UseAxiosSecure from '../../hooks/useAxiosSecure/UseAxiosSecure';
-import { useQuery } from '@tanstack/react-query';
-import { FaTrash, FaUsers } from 'react-icons/fa';
-import Swal from 'sweetalert2';
 
+import { useQuery } from "@tanstack/react-query";
+import { FaTrash, FaUsers } from "react-icons/fa";
+import Swal from "sweetalert2";
+import UseAxiosSecure from "../../hooks/useAxiosSecure/UseAxiosSecure";
 
 const AllUsers = () => {
     const axiosSecure = UseAxiosSecure();
@@ -11,7 +11,7 @@ const AllUsers = () => {
     const { data: users = [], refetch } = useQuery({
         queryKey: ['users'],
         queryFn: async () => {
-            const res = await axiosSecure.get('users');
+            const res = await axiosSecure.get('/users');
             return res.data;
         }
     });
@@ -33,6 +33,30 @@ const AllUsers = () => {
             })
     }
 
+    const handleBlockUser = user => {
+        const endpoint = user.status === 'active'
+            ? `/users/admin/block/${user._id}`
+            : `/users/admin/unblock/${user._id}`;
+
+        axiosSecure.patch(endpoint)
+            .then(res => {
+                console.log('Response from server:', res.data);
+                refetch();
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: `${user.name} is ${user.status === 'active' ? 'blocked' : 'unblocked'}`,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            })
+            .catch(error => {
+                console.error('Error blocking/unblocking user:', error);
+            });
+    };
+
+
+
     const handleDeleteUser = user => {
         Swal.fire({
             title: "Are you sure?",
@@ -48,9 +72,7 @@ const AllUsers = () => {
                     .delete(`/users/${user._id}`)
                     .then((res) => {
                         if (res.data.deletedCount > 0) {
-
                             refetch();
-
                             Swal.fire({
                                 title: "Deleted!",
                                 text: "Your file has been deleted.",
@@ -59,14 +81,16 @@ const AllUsers = () => {
                         }
                     })
                     .catch((error) => {
-                        console.error("Error deleting donation request:", error);
+                        console.error("Error deleting user:", error);
                     });
             }
         });
     }
+
     return (
         <div>
-            <h2>All Users: {users.length}</h2>
+            <h2 className='text-4xl text-center font-bold my-5'>All Users: {users.length}</h2>
+            <div className='divider'></div>
             <div className="overflow-x-auto">
                 <table className="table table-zebra">
                     {/* head */}
@@ -77,7 +101,8 @@ const AllUsers = () => {
                             <th>Email</th>
                             <th>Name</th>
                             <th>Roles</th>
-                            <th>Delete</th>
+                            <th>Status</th> {/* Add this line for the new column */}
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -85,7 +110,6 @@ const AllUsers = () => {
                             <tr key={user._id}>
                                 <th>{index + 1}</th>
                                 <td>
-
                                     <img
                                         src={user.avatar}
                                         alt={`Avatar of ${user.name}`}
@@ -95,21 +119,32 @@ const AllUsers = () => {
                                 <td>{user.email}</td>
                                 <td>{user.name}</td>
                                 <td>
-                                    {
-                                        user.role === 'admin' ? 'Admin' : <button
+                                    {user.role === 'admin' ? 'Admin' : (
+                                        <button
                                             onClick={() => handleMakeAdmin(user)}
                                             className="btn bg-orange-600 text-white"
                                         >
-                                            <FaUsers ></FaUsers>
+                                            <FaUsers></FaUsers>
                                         </button>
-                                    }
+                                    )}
                                 </td>
-                                <td><button
-                                    onClick={() => handleDeleteUser(user)}
-                                    className="btn bg-red-600 text-white"
-                                >
-                                    <FaTrash ></FaTrash>
-                                </button></td>
+                                <td>{user.status}</td>
+                                <td>
+                                    <button
+                                        onClick={() => handleBlockUser(user)}
+                                        className={`btn bg-${user.status === 'active' ? 'red' : 'blue'}-600 text-white`}
+                                    >
+                                        {user.status === 'active' ? 'Block' : 'Unblock'}
+                                    </button>
+
+
+                                    <button
+                                        onClick={() => handleDeleteUser(user)}
+                                        className="btn bg-red-600 text-white ml-2"
+                                    >
+                                        <FaTrash></FaTrash>
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
