@@ -68,6 +68,8 @@ const CreateDonationRequest = () => {
         const selectedDistrictId = event.target.value;
         setSelectedDistrict(selectedDistrictId);
     };
+     
+    
 
     const filteredUpazillas = upazillas.filter(
         (upazilla) => upazilla.district_id === selectedDistrict
@@ -85,13 +87,13 @@ const CreateDonationRequest = () => {
                                 <label className="label">
                                     <span className="label-text">Requester Name</span>
                                 </label>
-                                <input type="text" defaultValue={user.name} readOnly className="input input-bordered" />
+                                <input type="text" defaultValue={user.name}  className="input input-bordered" />
                             </div>
                             <div className="form-control">
                                 <label className="label">
                                     <span className="label-text">Requester Email</span>
                                 </label>
-                                <input type="email" value={user.email} readOnly className="input input-bordered" />
+                                <input type="email" value={user.email}  className="input input-bordered" />
                             </div>
                             {/* New fields */}
                             <div className="form-control">

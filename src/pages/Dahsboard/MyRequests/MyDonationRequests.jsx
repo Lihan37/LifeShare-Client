@@ -7,14 +7,14 @@ const MyDonationRequests = () => {
   const [donationRequests, setDonationRequests] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [requestsPerPage] = useState(5); // Adjust the number of requests per page
+  const [requestsPerPage] = useState(5); 
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchDonationRequests = async () => {
       try {
         if (user && user.email) {
-          // Fetch all donation requests initially
+          
           const allDonationRequests = await axiosPublic.get(`/donationRequests`);
 
           // Filter donation requests based on the logged-in user's email
@@ -34,7 +34,7 @@ const MyDonationRequests = () => {
   }, [axiosPublic, user]);
 
   useEffect(() => {
-    // Update filteredRequests when donationRequests changes
+    
     setFilteredRequests(donationRequests);
   }, [donationRequests]);
   const indexOfLastRequest = currentPage * requestsPerPage;

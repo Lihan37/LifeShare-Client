@@ -1,37 +1,43 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import UseAxiosSecure from "../../hooks/useAxiosSecure/UseAxiosSecure";
-import districtsData from "../../../../public/districts.json";
-import upazilasData from "../../../../public/upazilla.json";
+import districtsData from "../../../districts.json";
+import upazilasData from "../../../upazilla.json";
+import { AuthContext } from "../../providers/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
-const RecentDonationRequests = ({ user }) => {
+const RecentDonationRequests = () => {
   const axiosSecure = UseAxiosSecure();
   const [donationRequests, setDonationRequests] = useState([]);
-
-  // Replace these with your fake JSON data
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const districts = districtsData;
   const upazilas = upazilasData;
 
   useEffect(() => {
     const fetchDonationRequests = async () => {
       try {
-        const response = await axiosSecure.get('/donationRequests');
+        console.log('Fetching with userEmail:', user.email); // Log the userEmail
+        const response = await axiosSecure.get('/donationRequests', {
+          params: {
+            userEmail: user.email,
+          },
+        });
         setDonationRequests(response.data);
+        console.log('Fetched Donation Requests:', response.data);
       } catch (error) {
         console.error('Error fetching donation requests:', error);
       }
     };
 
     fetchDonationRequests();
-  }, [axiosSecure]);
+  }, [axiosSecure, user.email]);
 
-  // Helper function to get the district name by ID
   const getDistrictNameById = (districtId) => {
     const district = districts.find((d) => d.id === districtId);
     return district ? district.name : '';
   };
 
-  // Helper function to get the upazila name by ID
   const getUpazilaNameById = (upazilaId) => {
     const upazila = upazilas.find((u) => u.id === upazilaId);
     return upazila ? upazila.name : '';
@@ -69,6 +75,36 @@ const RecentDonationRequests = ({ user }) => {
       }
     });
   };
+  const handleEdit = (id) => {
+    // Navigate to the edit page with the donation request ID
+    navigate(`/dashboard/edit/${id}`);
+};
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      const response = await axiosSecure.put(`/donationRequests/${id}/status`, {
+        newStatus: newStatus,
+      });
+
+      if (response.data.updatedCount > 0) {
+        setDonationRequests((prevRequests) =>
+          prevRequests.map((request) =>
+            request._id === id
+              ? { ...request, donationStatus: newStatus }
+              : request
+          )
+        );
+
+        Swal.fire({
+          title: "Success!",
+          text: "Donation status updated.",
+          icon: "success",
+        });
+      }
+    } catch (error) {
+      console.error("Error changing donation status:", error);
+    }
+  };
 
   return (
     <div className="p-4">
@@ -95,12 +131,61 @@ const RecentDonationRequests = ({ user }) => {
               </p>
               {request.donationStatus === "pending" && (
                 <div className="flex mt-4 space-x-2">
-                  <button className="btn bg-blue-700 text-white">Edit</button>
+                  <button
+                    onClick={() => handleStatusChange(request._id, 'inprogress')}
+                    className="btn bg-blue-600 text-white"
+                  >
+                    Start Donation
+                  </button>
                   <button
                     onClick={() => handleDelete(request._id)}
                     className="btn bg-red-600 text-white"
                   >
                     Delete
+                  </button>
+                  <button
+                    onClick={() => handleEdit(request._id)}
+                    className="btn bg-yellow-600 text-white"
+                  >
+                    Edit
+                  </button>
+                </div>
+              )}
+              {request.donationStatus === "inprogress" && (
+                <div className="flex mt-4 space-x-2">
+                  <button
+                    onClick={() => handleStatusChange(request._id, 'done')}
+                    className="btn bg-green-600 text-white"
+                  >
+                    Done
+                  </button>
+                  <button
+                    onClick={() => handleStatusChange(request._id, 'canceled')}
+                    className="btn bg-yellow-600 text-white"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => handleEdit(request._id)}
+                    className="btn bg-yellow-600 text-white"
+                  >
+                    Edit
+                  </button>
+                </div>
+              )}
+              {request.donationStatus === "canceled" && (
+                <div className="flex mt-4 space-x-2">
+                  <button
+                    onClick={() => handleStatusChange(request._id, 'inprogress')}
+                    className="btn bg-blue-600 text-white"
+                  >
+                    Start Donation
+                  </button>
+                  <button
+                    onClick={() => handleEdit(request._id)}
+                    className="btn bg-yellow-600 text-white"
+                  >
+                    Edit
                   </button>
                 </div>
               )}
@@ -116,3 +201,5 @@ const RecentDonationRequests = ({ user }) => {
 };
 
 export default RecentDonationRequests;
+
+

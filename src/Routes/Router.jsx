@@ -17,6 +17,7 @@ import AdminHome from "../pages/Dahsboard/AdminHome/AdminHome";
 import ContentManagement from "../pages/Dahsboard/ContentManagement/ContentManagement";
 import BlogList from "../pages/Dahsboard/ContentManagement/BlogList";
 import DonationDetailsPage from "../pages/Donationdetails/DonationDetailsPage";
+import EditDonationRequest from "../pages/Dahsboard/EditDonationRequest/EditDonationrequest";
 
 export const router = createBrowserRouter([
     {
@@ -80,7 +81,12 @@ export const router = createBrowserRouter([
             {
                 path:  'content-management',
                 element: <ContentManagement></ContentManagement>
+            },
+            {
+                path: 'edit/:id',
+                element: <EditDonationRequest></EditDonationRequest>
             }
+            
         ]
     }
 ]);
