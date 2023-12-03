@@ -11,20 +11,18 @@ const RecentDonationRequests = () => {
   const [donationRequests, setDonationRequests] = useState([]);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const districts = districtsData;
-  const upazilas = upazilasData;
+  
 
   useEffect(() => {
     const fetchDonationRequests = async () => {
       try {
-        console.log('Fetching with userEmail:', user.email); // Log the userEmail
         const response = await axiosSecure.get('/donationRequests', {
           params: {
             userEmail: user.email,
           },
         });
-        setDonationRequests(response.data);
         console.log('Fetched Donation Requests:', response.data);
+        setDonationRequests(response.data);
       } catch (error) {
         console.error('Error fetching donation requests:', error);
       }
@@ -32,16 +30,6 @@ const RecentDonationRequests = () => {
 
     fetchDonationRequests();
   }, [axiosSecure, user.email]);
-
-  const getDistrictNameById = (districtId) => {
-    const district = districts.find((d) => d.id === districtId);
-    return district ? district.name : '';
-  };
-
-  const getUpazilaNameById = (upazilaId) => {
-    const upazila = upazilas.find((u) => u.id === upazilaId);
-    return upazila ? upazila.name : '';
-  };
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -75,10 +63,11 @@ const RecentDonationRequests = () => {
       }
     });
   };
+
   const handleEdit = (id) => {
-    // Navigate to the edit page with the donation request ID
+    
     navigate(`/dashboard/edit/${id}`);
-};
+  };
 
   const handleStatusChange = async (id, newStatus) => {
     try {
@@ -118,7 +107,7 @@ const RecentDonationRequests = () => {
               </p>
               <p>
                 <strong>Recipient Location:</strong>{" "}
-                {`${getDistrictNameById(request.recipientDistrict)}, ${getUpazilaNameById(request.recipientUpazila)}`}
+                {`${request.recipientDistrict}, ${request.recipientUpazila}`}
               </p>
               <p>
                 <strong>Donation Date:</strong> {request.donationDate}
@@ -201,5 +190,3 @@ const RecentDonationRequests = () => {
 };
 
 export default RecentDonationRequests;
-
-

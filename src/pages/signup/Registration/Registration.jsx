@@ -4,11 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../../providers/AuthProvider";
 import { ToastContainer, toast } from "react-toastify";
-import UseAxiosPublic from "../../hooks/useAxiosPublic/UseAxioxPublic";
 import Swal from "sweetalert2";
 import SocialLogin from "../SocialLogin/SocialLogin";
+import UseAxiosPublic from "../../hooks/useAxiosPublic/UseAxioxPublic";
 
-
+// Define the image hosting key and API
 const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const image_hosting_api = `https://api.imgbb.com/1/upload?key=600d5036af985fdac53804b2e2c7d4fb`;
 
@@ -58,47 +58,56 @@ const Registration = () => {
     );
 
     const onSubmit = async (data) => {
-        console.log(data);
+        
+        console.log("Form Data:", data);
 
-        const imageFile = { image: data.avatar[0] };
-        // const res = await axiosPublic.post(image_hosting_api, imageFile, {
-        //     headers: {
-        //         'content-type': 'multipart/form-data'
-        //     }
-        // });
+        
         const formData = new FormData();
-        formData.append('image', data.avatar[0])
+        formData.append('image', data.avatar[0]);
+        formData.append('name', data.name);
+        formData.append('email', data.email);
+        formData.append('bloodGroup', data.bloodGroup);
+        formData.append('district', selectedDistrict);
+        formData.append('upazila', data.upazila);
+        formData.append('password', data.password);
 
+        
         fetch(image_hosting_api, {
             method: 'POST',
             body: formData
         })
-            .then(res => res.json()).then((res) => {
-                console.log(res);
-                createUser(data.email, data.password)
+        .then(res => res.json())
+        .then((res) => {
+            
+            console.log("Image Upload Response:", res);
+
+            const selectedDistrictData = districts.find(district => district.id === selectedDistrict);
+            const selectedUpazillaData = upazillas.find(upazilla => upazilla.id === data.upazila);
+    
+            createUser(data.email, data.password)
                 .then(result => {
                     const loggedUser = result.user;
-                    console.log(loggedUser);
-                    updateUserProfile(data.name, data.photoURL)
+                    console.log("Logged User:", loggedUser);
+
+                    updateUserProfile(data.name, res.data.url_viewer)
                         .then(() => {
-                            console.log('user profile info updated');
+                            console.log('User profile info updated');
 
-                            const selectedDistrictObject = districts.find((district) => district.id === selectedDistrict);
-                            const selectedUpazilaObject = upazillas.find((upazila) => upazila.id === data.upazila);
-
+                            
                             const userInfo = {
                                 name: data.name,
                                 email: data.email,
-                                avatar:  res.data.url_viewer,
+                                avatar: res.data.url_viewer,
                                 bloodGroup: data.bloodGroup,
-                                district: selectedDistrictObject ? selectedDistrictObject.name : '',
-                                upazila: selectedUpazilaObject ? selectedUpazilaObject.name : '',
+                                district: selectedDistrictData ? selectedDistrictData.name : '',
+                                upazila: selectedUpazillaData ? selectedUpazillaData.name : '',
                             };
 
+                            
                             axiosPublic.post('/users', userInfo)
                                 .then(res => {
                                     if (res.data.insertedId) {
-                                        console.log('userAdded db', userInfo.data);
+                                        console.log('User Added to DB', userInfo);
                                         reset();
                                         Swal.fire({
                                             position: "top-end",
@@ -110,39 +119,35 @@ const Registration = () => {
                                         navigate('/');
                                     }
                                 })
-
+                                .catch(error => console.log(error));
                         })
-                        .catch(error => console.log(error))
-                });
+                        .catch(error => console.log(error));
+                })
+                .catch(error => console.log(error));
 
-                if (password !== confirmPassword) {
-                    toast.error('Passwords do not match');
-                    return;
-                }
+            
+            if (data.password !== confirmPassword) {
+                toast.error('Passwords do not match');
+                return;
+            }
 
-                if (password.length < 6) {
-                    setRegisterError('Password should be at least 6 characters long');
-                    toast.error('Password should be at least 6 characters long');
-                    return;
-                } else if (!/[A-Z]/.test(password)) {
-                    setRegisterError('Password should contain at least one capital letter');
-                    toast.error('Password should contain at least one capital letter');
-                    return;
-                } else if (!/[!@#$%^&*()_+[\]{};':"\\|,.<>?]/.test(password)) {
-                    setRegisterError('Password should contain at least one special character');
-                    toast.error('Password should contain at least one special character');
-                    return;
-                }
+            if (data.password.length < 6) {
+                setRegisterError('Password should be at least 6 characters long');
+                toast.error('Password should be at least 6 characters long');
+                return;
+            } else if (!/[A-Z]/.test(data.password)) {
+                setRegisterError('Password should contain at least one capital letter');
+                toast.error('Password should contain at least one capital letter');
+                return;
+            } else if (!/[!@#$%^&*()_+[\]{};':"\\|,.<>?]/.test(data.password)) {
+                setRegisterError('Password should contain at least one special character');
+                toast.error('Password should contain at least one special character');
+                return;
+            }
 
-                setRegisterError('');
-                setSuccess('User created successfully')
-            })
-
-        // console.log(res.data);
-
-        const { password, confirmPassword } = data;
-
-
+            setRegisterError('');
+            setSuccess('User created successfully');
+        });
     };
 
     return (

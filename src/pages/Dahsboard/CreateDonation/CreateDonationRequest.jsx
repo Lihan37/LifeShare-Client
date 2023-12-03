@@ -18,30 +18,34 @@ const CreateDonationRequest = () => {
 
     const onSubmit = async (data) => {
         try {
-            
+            const selectedDistrictData = districts.find(district => district.id === data.recipientDistrict);
+            const selectedUpazillaData = upazillas.find(upazilla => upazilla.id === data.recipientUpazila);
+    
             const requestData = {
                 ...data,
                 requesterName: user.name,
                 requesterEmail: user.email,
-                donationStatus: "pending", 
+                donationStatus: "pending",
+                recipientDistrict: selectedDistrictData ? selectedDistrictData.name : 'Unknown District',
+                recipientUpazila: selectedUpazillaData ? selectedUpazillaData.name : 'Unknown Upazila',
             };
-
-            
+    
             const response = await axiosPublic.post('/donationRequests', requestData);
-
+    
             if (response.data.success) {
-                
                 console.log("Donation request created successfully");
-                reset(); 
+                reset();
                 navigate('/dashboard');
             } else {
-                
                 console.error("Failed to create donation request");
             }
         } catch (error) {
             console.error("Error submitting donation request:", error);
         }
     };
+    
+    
+    
 
     const [districts, setDistricts] = useState([]);
     const [upazillas, setUpazillas] = useState([]);
@@ -220,3 +224,5 @@ const CreateDonationRequest = () => {
 };
 
 export default CreateDonationRequest;
+
+
