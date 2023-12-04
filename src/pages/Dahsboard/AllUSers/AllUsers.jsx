@@ -150,57 +150,57 @@ const AllUsers = () => {
                         </tr>
                     </thead>
                     <tbody>
-                    {displayedUsers.map((user, index) => (
-  <tr key={user._id}>
-    <th>{index + 1}</th>
-    <td>
-      <img
-        src={user.avatar}
-        alt={`Avatar of ${user.name}`}
-        style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-      />
-    </td>
-    <td>{user.email}</td>
-    <td>{user.name}</td>
-    <td>
-      {user.role === 'admin' ? 'Admin' : (
-        <>
-          {user.role === 'volunteer' ? 'Volunteer' : (
-            <>
-              <button
-                onClick={() => handleMakeAdmin(user)}
-                className="btn bg-orange-600 text-white"
-              >
-                <FaUsers></FaUsers>
-              </button>
-              <button
-                onClick={() => handleMakeVolunteer(user)}
-                className="btn bg-green-600 text-white ml-2"
-              >
-                Make Volunteer
-              </button>
-            </>
-          )}
-        </>
-      )}
-    </td>
-    <td>{user.status}</td>
-    <td>
-      <button
-        onClick={() => handleBlockUser(user)}
-        className={`btn bg-${user.status === 'active' ? 'red' : 'blue'}-600 text-white`}
-      >
-        {user.status === 'active' ? 'Block' : 'Unblock'}
-      </button>
-      <button
-        onClick={() => handleDeleteUser(user)}
-        className="btn bg-red-600 text-white ml-2"
-      >
-        <FaTrash></FaTrash>
-      </button>
-    </td>
-  </tr>
-))}
+                        {displayedUsers.map((user, index) => (
+                            <tr key={user._id}>
+                                <th>{index + 1}</th>
+                                <td>
+                                    <img
+                                        src={user.avatar}
+                                        alt={`Avatar of ${user.name}`}
+                                        style={{ width: '50px', height: '50px', borderRadius: '50%' }}
+                                    />
+                                </td>
+                                <td>{user.email}</td>
+                                <td>{user.name}</td>
+                                <td>
+                                    {user.role === 'admin' ? 'Admin' : (
+                                        <>
+                                            {user.role === 'volunteer' ? 'Volunteer' : (
+                                                <>
+                                                    <button
+                                                        onClick={() => handleMakeAdmin(user)}
+                                                        className="btn bg-orange-600 text-white"
+                                                    >
+                                                        <FaUsers></FaUsers>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleMakeVolunteer(user)}
+                                                        className="btn bg-green-600 text-white ml-2"
+                                                    >
+                                                        Make Volunteer
+                                                    </button>
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+                                </td>
+                                <td>{user.status}</td>
+                                <td>
+                                    <button
+                                        onClick={() => handleBlockUser(user)}
+                                        className={`btn bg-${user.status === 'active' ? 'red' : 'blue'}-600 text-white`}
+                                    >
+                                        {user.status === 'active' ? 'Block' : 'Unblock'}
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteUser(user)}
+                                        className="btn bg-red-600 text-white ml-2"
+                                    >
+                                        <FaTrash></FaTrash>
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
 
 
 

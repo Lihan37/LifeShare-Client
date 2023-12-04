@@ -5,13 +5,14 @@ import { useContext } from 'react';
 import { AuthContext } from '../pages/providers/AuthProvider';
 import RecentDonationRequests from '../pages/Dahsboard/RecentDonationRequests/RecenDonationrequests';
 import UseAdmin from '../pages/hooks/UseAdmin/UseAdmin';
+import UseVolunteer from '../pages/hooks/UseVolunteer/UseVolunteer';
 
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const location = useLocation();
   const [isAdmin] = UseAdmin();
-
+  const [isVolunteer] = UseVolunteer();
   const isHomePage = location.pathname === '/dashboard';
 
   return (
@@ -67,36 +68,80 @@ const Dashboard = () => {
                 </Link>
 
               </li>
+              
             </>
-              :
-              <>
-                <li>
-                  <Link to="/dashboard">
-                    <FaHome></FaHome>Donor Home
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/dashboard/profile">
-                    <FaUser></FaUser>My Profile
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/dashboard/my-donation-requests">
-                    <FaHeart></FaHeart> My Donation requests
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/dashboard/create-donation-request">
-                    <FaHandHoldingHeart></FaHandHoldingHeart> Create Donation
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/dashboard/content-management">
-                    <FaBlog></FaBlog> Content Management
-                  </Link>
+              : isVolunteer ? (
+                <>
+                  {/* Volunteer routes */}
+                  <li>
+                    <Link to="/dashboard">
+                      <FaHome></FaHome>Volunteer Home
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/dashboard/adminHome">
+                      <FaHome></FaHome>Volunteer DashBoard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/dashboard/profile">
+                      <FaUser></FaUser>My Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/dashboard/all-blood-donation-request">
+                      <FaHeart></FaHeart> All Blood Donations
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/dashboard/my-donation-requests">
+                      <FaHeart></FaHeart> My Donation requests
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/dashboard/create-donation-request">
+                      <FaHandHoldingHeart></FaHandHoldingHeart> Create Donation
+                    </Link>
 
-                </li>
-              </>
+                  </li>
+                  <li>
+                    <Link to="/dashboard/content-management">
+                      <FaBlog></FaBlog> Content Management
+                    </Link>
+
+                  </li>
+                  
+                </>
+              ) :
+                <>
+                  <li>
+                    <Link to="/dashboard">
+                      <FaHome></FaHome>Donor Home
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/dashboard/profile">
+                      <FaUser></FaUser>My Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/dashboard/my-donation-requests">
+                      <FaHeart></FaHeart> My Donation requests
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/dashboard/create-donation-request">
+                      <FaHandHoldingHeart></FaHandHoldingHeart> Create Donation
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/dashboard/content-management">
+                      <FaBlog></FaBlog> Content Management
+                    </Link>
+
+                  </li>
+                  
+                </>
           }
 
         </ul>

@@ -3,6 +3,7 @@ import JoditEditor from 'jodit-react';
 import Swal from 'sweetalert2';
 import BlogList from './BlogList';
 import axios from 'axios';
+import UseVolunteer from '../../hooks/UseVolunteer/UseVolunteer';
 
 const AddBlogForm = () => {
   const [title, setTitle] = useState('');
@@ -13,6 +14,7 @@ const AddBlogForm = () => {
   const [blogs, setBlogs] = useState([]);
 
   const token = localStorage.getItem('access-token');
+  const [isVolunteer] = UseVolunteer();
 
   const fetchBlogs = async () => {
     try {
@@ -227,13 +229,15 @@ const AddBlogForm = () => {
 
         {newlyCreatedBlog ? (
           <div>
-            {blogStatus === 'draft' && (
+            {!isVolunteer && blogStatus === 'draft' && (
               <button className='btn' onClick={() => handlePublish(newlyCreatedBlog._id)}>Publish</button>
             )}
-            {blogStatus === 'published' && (
+            {!isVolunteer && blogStatus === 'published' && (
               <button className='btn' onClick={() => handleUnpublish(newlyCreatedBlog._id)}>Unpublish</button>
             )}
-            <button className='btn' onClick={() => handleDelete(newlyCreatedBlog._id)}>Delete</button>
+            {!isVolunteer && (
+              <button className='btn' onClick={() => handleDelete(newlyCreatedBlog._id)}>Delete</button>
+            )}
           </div>
         ) : (
           <button className='btn' type="submit">Create</button>

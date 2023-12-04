@@ -15,10 +15,12 @@ import AllUsers from "../pages/Dahsboard/AllUSers/AllUsers";
 import AllDonation from "../pages/Dahsboard/AllDonation/AllDonation";
 import AdminHome from "../pages/Dahsboard/AdminHome/AdminHome";
 import ContentManagement from "../pages/Dahsboard/ContentManagement/ContentManagement";
-import DonationDetailsPage from "../pages/Donationdetails/DonationDetailsPage";
 import EditDonationRequest from "../pages/Dahsboard/EditDonationRequest/EditDonationrequest";
 import AddBlogForm from "../pages/Dahsboard/ContentManagement/AddBlogForm";
 import Blog from "../pages/Dahsboard/ContentManagement/Blog";
+import DonationRequests from "../pages/Donation requests/DonationRequests";
+import DonationDetailsPage from "../pages/Donationdetails/DonationDetailsPage";
+
 
 export const router = createBrowserRouter([
     {
@@ -45,10 +47,22 @@ export const router = createBrowserRouter([
                 path: '/blog',
                 element: <Blog></Blog>
             },
+
+
             {
-                path: '/donationDetails',
-                element: <DonationDetailsPage></DonationDetailsPage>
-            }
+                path: 'donationDetails/:id',
+                element: <DonationDetailsPage />
+            },
+
+
+
+
+
+            {
+                path: 'donationRequests',
+                element: <DonationRequests></DonationRequests>
+            },
+
         ]
     },
     {
@@ -80,7 +94,7 @@ export const router = createBrowserRouter([
                 element: <AdminHome></AdminHome>
             },
             {
-                path:  'content-management',
+                path: 'content-management',
                 element: <ContentManagement></ContentManagement>
             },
             {
@@ -90,8 +104,9 @@ export const router = createBrowserRouter([
             {
                 path: 'edit/:id',
                 element: <EditDonationRequest></EditDonationRequest>
-            }
+            },
             
+
         ]
     }
 ]);

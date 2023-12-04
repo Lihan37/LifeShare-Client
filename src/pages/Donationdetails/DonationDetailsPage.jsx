@@ -1,52 +1,76 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 const DonationDetailsPage = () => {
-  
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+    const { id } = useParams();
+    const [donationDetails, setDonationDetails] = useState(null);
 
-  
-  const openModal = () => {
-    setModalIsOpen(true);
-  };
+    useEffect(() => {
+        const fetchDonationDetails = async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/donationRequests/${id}`);
+                const data = await response.json();
+                setDonationDetails(data);
+            } catch (error) {
+                console.error('Error fetching donation details:', error);
+            }
+        };
 
-  // Function to close the modal
-  const closeModal = () => {
-    setModalIsOpen(false);
-  };
+        fetchDonationDetails();
+    }, [id]);
 
-  // Your donation details information here...
+    const handleStatusChange = async () => {
+        try {
+            // Assuming you have an API endpoint to update the status
+            const response = await fetch(`http://localhost:5000/donationRequests/${id}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ newStatus: 'inprogress' }),
+            });
 
-  return (
-    <div>
-      <h2>Donation Details</h2>
+            const data = await response.json();
 
-      {/* Donation details information here... */}
-      {/* You can display the donation details information here */}
+            if (data.updatedCount === 1) {
+                // Update local state or perform additional actions
+                setDonationDetails(prevDetails => ({
+                    ...prevDetails,
+                    donationStatus: 'inprogress',
+                }));
+            } else {
+                console.error('Failed to update donation status');
+            }
+        } catch (error) {
+            console.error('Error updating donation status:', error);
+        }
+    };
 
-      {/* Donate button */}
-      <button onClick={openModal}>Donate</button>
-
-      {/* Donation modal */}
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        contentLabel="Donation Modal"
-      >
-        <h2>Donation Modal</h2>
-
-        {/* Donation modal form and confirm button here... */}
-        {/* You can add your form fields for donor name and email here */}
-
-        <p>Donor Name: {/* Display donor name here */}</p>
-        <p>Donor Email: {/* Display donor email here */}</p>
-
-        {/* Confirm button */}
-        <button onClick={closeModal}>Confirm Donation</button>
-        <button onClick={closeModal}>Close Modal</button>
-      </Modal>
-    </div>
-  );
+    return (
+        <div className="flex justify-center items-center h-screen">
+            <div className="max-w-md p-8 border rounded shadow-lg">
+                <h2 className="text-2xl font-bold mb-4">Donation Details</h2>
+                {donationDetails ? (
+                    <div>
+                        <div className="mb-4">
+                            <p><strong>Recipient Name:</strong> {donationDetails.recipientName}</p>
+                            <p><strong>Email:</strong> {donationDetails.requesterEmail}</p>
+                            <p><strong>Recipient District:</strong> {donationDetails.recipientDistrict}</p>
+                            {/* Include other details as needed */}
+                            <p><strong>Status:</strong> {donationDetails.donationStatus}</p>
+                        </div>
+                        {donationDetails.donationStatus === 'pending' && (
+                            <button className="btn" onClick={handleStatusChange}>
+                                Confirm Donation
+                            </button>
+                        )}
+                    </div>
+                ) : (
+                    <p>Loading...</p>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default DonationDetailsPage;
