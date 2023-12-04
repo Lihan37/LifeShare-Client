@@ -26,14 +26,12 @@ const EditDonationRequest = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch districts and upazilas data
                 setDistricts(districtsData);
                 setUpazilas(upazilasData);
 
-                // Fetch the donation request details by ID for editing
                 const response = await axiosPublic.get(`/donationRequests/${id}`); // Use id from useParams
-                const donationRequestData = response.data; // Correct variable name
-                // Populate the form fields with the fetched data
+                const donationRequestData = response.data;
+
                 reset({
                     requesterName: user.name,
                     requesterEmail: user.email,
@@ -65,20 +63,20 @@ const EditDonationRequest = () => {
 
     const onSubmit = async (data) => {
         try {
-            // Prepare the updated donation request data
             const updatedData = {
                 ...data,
                 requesterName: user.name,
                 requesterEmail: user.email,
                 donationStatus: 'pending',
+                recipientDistrict: districtsData.find(district => district.id === selectedDistrict)?.name || '',
+                recipientUpazila: upazilasData.find(upazila => upazila.id === data.recipientUpazila)?.name || '',
             };
-
-            // Send a PATCH request to update the donation request
+    
             const response = await axiosPublic.patch(`/donationRequests/${id}`, updatedData);
-
+    
             if (response.data.updatedCount > 0) {
                 console.log('Donation request updated successfully');
-                reset(); // Reset the form
+                reset();
                 navigate('/dashboard');
             } else {
                 console.error('Failed to update donation request');
@@ -87,8 +85,8 @@ const EditDonationRequest = () => {
             console.error('Error submitting donation request:', error);
         }
     };
-
     
+
     return (
         <div>
             <div className="hero min-h-screen bg-base-200">
@@ -96,7 +94,7 @@ const EditDonationRequest = () => {
                     <div className="card shrink-0 w-full shadow-2xl bg-base-100">
                         <h1 className="text-center font-semibold pt-5 text-3xl">Edit Donation Request</h1>
                         <form onSubmit={handleSubmit(onSubmit)} className="card-body grid grid-cols-2">
-                            {/* Existing fields */}
+
                             <div className="form-control">
                                 <label className="label">
                                     <span className="label-text">Requester Name</span>
@@ -109,7 +107,7 @@ const EditDonationRequest = () => {
                                 </label>
                                 <input type="text" defaultValue={user.email} className="input input-bordered" disabled />
                             </div>
-                            {/* District dropdown */}
+
                             <div className="form-control">
                                 <label className="label">
                                     <span className="label-text">Recipient District</span>
@@ -132,7 +130,7 @@ const EditDonationRequest = () => {
                                 </select>
                                 {errors.recipientDistrict && <span>This field is required</span>}
                             </div>
-                            {/* Upazila dropdown */}
+                            {/* Recipient Upazila field */}
                             <div className="form-control">
                                 <label className="label">
                                     <span className="label-text">Recipient Upazila</span>
@@ -208,5 +206,3 @@ const EditDonationRequest = () => {
 };
 
 export default EditDonationRequest;
-
-

@@ -1,27 +1,24 @@
 import React, { useState, useEffect, useContext } from 'react';
 import UseAxiosPublic from '../../hooks/useAxiosPublic/UseAxioxPublic';
 import { AuthContext } from '../../providers/AuthProvider';
+import ReactPaginate from 'react-paginate';
 
 const MyDonationRequests = () => {
   const axiosPublic = UseAxiosPublic();
   const [donationRequests, setDonationRequests] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [requestsPerPage] = useState(5); 
+  const [currentPage, setCurrentPage] = useState(0);
+  const [requestsPerPage] = useState(3); 
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchDonationRequests = async () => {
       try {
         if (user && user.email) {
-          
           const allDonationRequests = await axiosPublic.get(`/donationRequests`);
-
-          // Filter donation requests based on the logged-in user's email
           const userDonationRequests = allDonationRequests.data.filter(
             (request) => request.requesterEmail === user.email
           );
-
           setDonationRequests(userDonationRequests);
           setFilteredRequests(userDonationRequests);
         }
@@ -33,65 +30,68 @@ const MyDonationRequests = () => {
     fetchDonationRequests();
   }, [axiosPublic, user]);
 
-  useEffect(() => {
-    
-    setFilteredRequests(donationRequests);
-  }, [donationRequests]);
-  const indexOfLastRequest = currentPage * requestsPerPage;
-  const indexOfFirstRequest = indexOfLastRequest - requestsPerPage;
-  const currentRequests = filteredRequests.slice(indexOfFirstRequest, indexOfLastRequest);
+  const totalPageCount = Math.ceil(filteredRequests.length / requestsPerPage);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
+  };
 
-  const handleFilterChange = (status) => {
-    if (status === 'all') {
-      setFilteredRequests(donationRequests);
-    } else {
-      const filtered = donationRequests.filter((request) => request.donationStatus === status);
-      setFilteredRequests(filtered);
-    }
+  const renderRequestsForPage = () => {
+    const startIdx = currentPage * requestsPerPage;
+    const endIdx = startIdx + requestsPerPage;
+    const pageRequests = filteredRequests.slice(startIdx, endIdx);
 
-    setCurrentPage(1); // Reset to the first page after filtering
+    return (
+      <tbody>
+        {pageRequests.map((request, index) => (
+          <tr key={request._id}>
+            <td>{index + 1}</td>
+            <td>{request.recipientName}</td>
+            <td>{`${request.recipientDistrict}, ${request.recipientUpazila}`}</td>
+            <td>{request.donationDate}</td>
+            <td>{request.donationTime}</td>
+            <td>{request.donationStatus}</td>
+            {/* Add more cells as needed */}
+          </tr>
+        ))}
+      </tbody>
+    );
   };
 
   return (
     <div className="overflow-x-auto">
-      <table className="table table-zebra">
-        {/* Table header */}
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Recipient Name</th>
-            <th>Recipient Location</th>
-            <th>Donation Date</th>
-            <th>Donation Time</th>
-            <th>Donation Status</th>
-            {/* Add more columns as needed */}
-          </tr>
-        </thead>
-        {/* Table body */}
-        <tbody>
-          {currentRequests.map((request, index) => (
-            <tr key={request._id}>
-              <td>{index + 1}</td>
-              <td>{request.recipientName}</td>
-              <td>{`${request.recipientDistrict}, ${request.recipientUpazila}`}</td>
-              <td>{request.donationDate}</td>
-              <td>{request.donationTime}</td>
-              <td>{request.donationStatus}</td>
-              {/* Add more cells as needed */}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {/* Pagination */}
-      {/* <div className='mt-10 text-center'>
-        {Array.from({ length: Math.ceil(filteredRequests.length / requestsPerPage) }).map((_, index) => (
-          <button key={index} onClick={() => paginate(index + 1)}>
-            {index + 1}
-          </button>
-        ))}
-      </div> */}
+      {filteredRequests.length > 0 ? (
+        <>
+          <table className="table table-zebra">
+            {/* Table header */}
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Recipient Name</th>
+                <th>Recipient Location</th>
+                <th>Donation Date</th>
+                <th>Donation Time</th>
+                <th>Donation Status</th>
+                {/* Add more columns as needed */}
+              </tr>
+            </thead>
+            {/* Table body */}
+            {renderRequestsForPage()}
+          </table>
+          {/* Pagination */}
+          {totalPageCount > 1 && (
+            <ReactPaginate
+              pageCount={totalPageCount}
+              onPageChange={handlePageClick}
+              forcePage={currentPage}
+              containerClassName={'pagination'}
+              activeClassName={'active'}
+            />
+          )}
+        </>
+      ) : (
+        <p>No donation requests</p>
+      )}
     </div>
   );
 };

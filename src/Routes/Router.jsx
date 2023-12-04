@@ -15,9 +15,10 @@ import AllUsers from "../pages/Dahsboard/AllUSers/AllUsers";
 import AllDonation from "../pages/Dahsboard/AllDonation/AllDonation";
 import AdminHome from "../pages/Dahsboard/AdminHome/AdminHome";
 import ContentManagement from "../pages/Dahsboard/ContentManagement/ContentManagement";
-import BlogList from "../pages/Dahsboard/ContentManagement/BlogList";
 import DonationDetailsPage from "../pages/Donationdetails/DonationDetailsPage";
 import EditDonationRequest from "../pages/Dahsboard/EditDonationRequest/EditDonationrequest";
+import AddBlogForm from "../pages/Dahsboard/ContentManagement/AddBlogForm";
+import Blog from "../pages/Dahsboard/ContentManagement/Blog";
 
 export const router = createBrowserRouter([
     {
@@ -42,7 +43,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/blog',
-                element: <BlogList></BlogList>
+                element: <Blog></Blog>
             },
             {
                 path: '/donationDetails',
@@ -81,6 +82,10 @@ export const router = createBrowserRouter([
             {
                 path:  'content-management',
                 element: <ContentManagement></ContentManagement>
+            },
+            {
+                path: 'content-management/add-blog',
+                element: <AddBlogForm></AddBlogForm>
             },
             {
                 path: 'edit/:id',

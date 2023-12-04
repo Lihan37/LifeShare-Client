@@ -224,5 +224,3 @@ const CreateDonationRequest = () => {
 };
 
 export default CreateDonationRequest;
-
-

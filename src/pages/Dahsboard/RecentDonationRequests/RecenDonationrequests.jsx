@@ -11,7 +11,7 @@ const RecentDonationRequests = () => {
   const [donationRequests, setDonationRequests] = useState([]);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+
 
   useEffect(() => {
     const fetchDonationRequests = async () => {
@@ -65,8 +65,12 @@ const RecentDonationRequests = () => {
   };
 
   const handleEdit = (id) => {
-    
+
     navigate(`/dashboard/edit/${id}`);
+  };
+
+  const handleViewAllRequests = () => {
+    navigate('/dashboard/my-donation-requests');
   };
 
   const handleStatusChange = async (id, newStatus) => {
@@ -181,6 +185,12 @@ const RecentDonationRequests = () => {
               <button className="btn mt-4 btn-secondary">View Details</button>
             </div>
           ))}
+          <button
+            onClick={handleViewAllRequests}
+            className="btn mt-4 btn-secondary"
+          >
+            View My All Requests
+          </button>
         </div>
       ) : (
         <p>No recent donation requests.</p>

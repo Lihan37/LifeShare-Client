@@ -26,6 +26,11 @@ const Dashboard = () => {
           {
             isAdmin ? <>
               <li>
+                <Link to="/dashboard">
+                  <FaHome></FaHome>DashBoard
+                </Link>
+              </li>
+              <li>
                 <Link to="/dashboard/adminHome">
                   <FaHome></FaHome>Admin Home
                 </Link>
@@ -46,16 +51,21 @@ const Dashboard = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/dashboard/my-donation-requests">
+                  <FaHeart></FaHeart> My Donation requests
+                </Link>
+              </li>
+              <li>
                 <Link to="/dashboard/create-donation-request">
                   <FaHandHoldingHeart></FaHandHoldingHeart> Create Donation
                 </Link>
-                
+
               </li>
               <li>
-              <Link to="/dashboard/content-management">
+                <Link to="/dashboard/content-management">
                   <FaBlog></FaBlog> Content Management
                 </Link>
-                
+
               </li>
             </>
               :
@@ -81,11 +91,11 @@ const Dashboard = () => {
                   </Link>
                 </li>
                 <li>
-              <Link to="/dashboard/content-management">
-                  <FaBlog></FaBlog> Content Management
-                </Link>
-                
-              </li>
+                  <Link to="/dashboard/content-management">
+                    <FaBlog></FaBlog> Content Management
+                  </Link>
+
+                </li>
               </>
           }
 

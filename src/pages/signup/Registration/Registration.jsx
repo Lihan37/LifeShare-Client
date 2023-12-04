@@ -97,7 +97,8 @@ const Registration = () => {
                             const userInfo = {
                                 name: data.name,
                                 email: data.email,
-                                avatar: res.data.url_viewer,
+                                avatar: res.data.display_url
+                                ,
                                 bloodGroup: data.bloodGroup,
                                 district: selectedDistrictData ? selectedDistrictData.name : '',
                                 upazila: selectedUpazillaData ? selectedUpazillaData.name : '',
