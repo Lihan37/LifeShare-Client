@@ -1,15 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams, useNavigate } from 'react-router-dom';
-import districtsData from '../../../districts.json';
-import upazilasData from '../../../upazilla.json';
 import { AuthContext } from '../../providers/AuthProvider';
 import UseAxiosPublic from '../../hooks/useAxiosPublic/UseAxioxPublic';
 
 const EditDonationRequest = () => {
     const { user } = useContext(AuthContext);
     const axiosPublic = UseAxiosPublic();
-    const { id } = useParams(); // Use the id from useParams
+    const { id } = useParams();
     const navigate = useNavigate();
 
     const {
@@ -26,10 +24,13 @@ const EditDonationRequest = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setDistricts(districtsData);
-                setUpazilas(upazilasData);
+                const districtsResponse = await axiosPublic.get('/districts.json'); 
+                setDistricts(districtsResponse.data);
 
-                const response = await axiosPublic.get(`/donationRequests/${id}`); // Use id from useParams
+                const upazilasResponse = await axiosPublic.get('/upazilas.json'); 
+                setUpazilas(upazilasResponse.data);
+
+                const response = await axiosPublic.get(`/donationRequests/${id}`);
                 const donationRequestData = response.data;
 
                 reset({
@@ -51,6 +52,7 @@ const EditDonationRequest = () => {
                 console.error('Error fetching data:', error);
             }
         };
+
         fetchData();
     }, [axiosPublic, id, reset, user.email, user.name]);
 
@@ -68,12 +70,12 @@ const EditDonationRequest = () => {
                 requesterName: user.name,
                 requesterEmail: user.email,
                 donationStatus: 'pending',
-                recipientDistrict: districtsData.find(district => district.id === selectedDistrict)?.name || '',
-                recipientUpazila: upazilasData.find(upazila => upazila.id === data.recipientUpazila)?.name || '',
+                recipientDistrict: districts.find((district) => district.id === selectedDistrict)?.name || '',
+                recipientUpazila: upazilas.find((upazila) => upazila.id === data.recipientUpazila)?.name || '',
             };
-    
+
             const response = await axiosPublic.patch(`/donationRequests/${id}`, updatedData);
-    
+
             if (response.data.updatedCount > 0) {
                 console.log('Donation request updated successfully');
                 reset();
@@ -85,7 +87,6 @@ const EditDonationRequest = () => {
             console.error('Error submitting donation request:', error);
         }
     };
-    
 
     return (
         <div>

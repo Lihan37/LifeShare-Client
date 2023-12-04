@@ -8,7 +8,7 @@ const DonationDetailsPage = () => {
     useEffect(() => {
         const fetchDonationDetails = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/donationRequests/${id}`);
+                const response = await fetch(`https://b8a12-server-side-lihan37.vercel.app/donationRequests/${id}`);
                 const data = await response.json();
                 setDonationDetails(data);
             } catch (error) {
@@ -22,7 +22,7 @@ const DonationDetailsPage = () => {
     const handleStatusChange = async () => {
         try {
             // Assuming you have an API endpoint to update the status
-            const response = await fetch(`http://localhost:5000/donationRequests/${id}/status`, {
+            const response = await fetch(`https://b8a12-server-side-lihan37.vercel.app/donationRequests/${id}/status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

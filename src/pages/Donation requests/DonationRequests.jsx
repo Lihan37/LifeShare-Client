@@ -9,7 +9,7 @@ const DonationRequests = () => {
     useEffect(() => {
         const fetchDonationRequests = async () => {
             try {
-                const response = await fetch('http://localhost:5000/donationRequests');
+                const response = await fetch('https://b8a12-server-side-lihan37.vercel.app/donationRequests');
                 const data = await response.json();
 
                 console.log('Donation Requests data:', data);

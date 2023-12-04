@@ -6,7 +6,7 @@ const Blog = () => {
   useEffect(() => {
     const fetchPublishedBlogs = async () => {
       try {
-        const response = await fetch('http://localhost:5000/blogs');
+        const response = await fetch('https://b8a12-server-side-lihan37.vercel.app/blogs');
         if (response.ok) {
           const blogs = await response.json();
           const publishedBlogs = blogs.filter(blog => blog.status === 'published');

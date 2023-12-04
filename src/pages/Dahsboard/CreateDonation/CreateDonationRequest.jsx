@@ -54,11 +54,11 @@ const CreateDonationRequest = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const districtsResponse = await fetch("/src/districts.json");
+                const districtsResponse = await fetch("/districts.json");
                 const districtsData = await districtsResponse.json();
                 setDistricts(districtsData);
         
-                const upazillasResponse = await fetch("/src/upazilla.json");
+                const upazillasResponse = await fetch("/upazilla.json");
                 const upazillasData = await upazillasResponse.json();
                 setUpazillas(upazillasData);
             } catch (error) {

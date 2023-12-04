@@ -1,8 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import UseAxiosSecure from "../../hooks/useAxiosSecure/UseAxiosSecure";
-import districtsData from "../../../districts.json";
-import upazilasData from "../../../upazilla.json";
+
 import { AuthContext } from "../../providers/AuthProvider";
 import { useNavigate } from "react-router-dom";
 

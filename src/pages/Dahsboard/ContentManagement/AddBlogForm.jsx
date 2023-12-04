@@ -18,7 +18,7 @@ const AddBlogForm = () => {
 
   const fetchBlogs = async () => {
     try {
-      const response = await fetch('http://localhost:5000/blogs');
+      const response = await fetch('https://b8a12-server-side-lihan37.vercel.app/blogs');
       if (response.ok) {
         const fetchedBlogs = await response.json();
         setBlogs(fetchedBlogs);
@@ -42,7 +42,7 @@ const AddBlogForm = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/blogs', {
+      const response = await fetch('https://b8a12-server-side-lihan37.vercel.app/blogs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ const AddBlogForm = () => {
   
   const handlePublish = async (blogId) => {
     try {
-      const response = await fetch(`http://localhost:5000/blogs/${blogId}/publish`, {
+      const response = await fetch(`https://b8a12-server-side-lihan37.vercel.app/blogs/${blogId}/publish`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ const AddBlogForm = () => {
 
   const handleUnpublish = async (blogId) => {
     try {
-      const response = await fetch(`http://localhost:5000/blogs/${blogId}/unpublish`, {
+      const response = await fetch(`https://b8a12-server-side-lihan37.vercel.app/blogs/${blogId}/unpublish`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -168,7 +168,7 @@ const AddBlogForm = () => {
 
   const handleDelete = async (blogId) => {
     try {
-      const response = await fetch(`http://localhost:5000/blogs/${blogId}`, {
+      const response = await fetch(`https://b8a12-server-side-lihan37.vercel.app/blogs/${blogId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
